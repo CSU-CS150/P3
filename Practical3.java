@@ -44,7 +44,7 @@ public class Practical3 {
     public static final int MAX_MILES_PER_DAY = 20;
     public static final int EARTH_RADIUS  = 3961;  //radius of the earth at 39 degrees latitude in miles - to use Kilometers: 6373
     public static final char CITY_DELIMINATOR = ';'; // used to split data into cities
-    public static final char CITY_DATA_DELMINATOR = ',';  // used to split city data into Name,Latitude,Longitude
+    public static final char CITY_DATA_DELIMINATOR = ',';  // used to split city data into Name,Latitude,Longitude
     public static final char DEGREE = '°';
     public static final char MINUTE = '\'';
     public static final char SECOND = '"';
@@ -182,7 +182,7 @@ public class Practical3 {
      * </pre>
      *
      * This method will integrate loops and string methods. You will use both the CITY_DATA_DELIMINATOR and the
-     * CITY_DELMINATOR constants
+     * CITY_DELIMINATOR constants
      *
      * @param cityList A list of cities in the standard cityList format (full city data)
      */
@@ -265,7 +265,7 @@ public class Practical3 {
      *
      * </ol>
      * A couple hints for this method:
-     *  Use the CITY_DELIMINATOR, CITY_DATA_DELMINATOR, and the MAX_MILES_PER_DAY constants. They are there for a
+     *  Use the CITY_DELIMINATOR, CITY_DATA_DELIMINATOR, and the MAX_MILES_PER_DAY constants. They are there for a
      *  reason, and you should not be hard coding the deliminators at all.
      *
      *  <p>
