@@ -289,7 +289,7 @@ public class Practical3 {
      *     if breadcrumbs equals Fort Collins,40°35'6.9288"N,105°5'3.9084"W
      *     then Fort Collins,40°35'6.9288"N,105°5'3.9084"W will be returned
      *
-     *     if breadcrumbs equals C;Denver,39°44'31.3548"N,104°59'29.5116"W
+     *     if breadcrumbs equals Fort Collins,40°35'6.9288"N,105°5'3.9084"W;Denver,39°44'31.3548"N,104°59'29.5116"W
      *     then Denver,39°44'31.3548"N,104°59'29.5116"W will be returned
      *
      * </pre>
