@@ -21,6 +21,7 @@ import java.util.Scanner;
  *      <li>String concatenation</li>
  *      <li>Program flow control</li>
  *      <li>Complex boolean logic</li>
+ *      <li>Pattern Matching</li>
  *  </ul>
  *
  * <h2>How to win?</h2>
@@ -28,14 +29,14 @@ import java.util.Scanner;
  * but a fun way to challenge yourself will be to see if you can find a path to visit all the cities in the
  * least amount of time possible. This is a well known problem in computer science, that we will talk about in class.
  *
- * Why are you visiting the cities? To tell them your love potion #9 of course! or whatever reason you can think about.
+ * Why are you visiting the cities? To sell them your love potion #9 of course! or whatever reason you can think about.
  * MUDs were often very open in their feel depending on how people played them.
  *
  * @author YOUR NAME <br>
  *         YOUR EMAIL <br>
  *         Computer Science Department <br>
  *         Colorado State University
- * @version 1.0
+ * @version 201901
  */
 public class Practical3 {
 
@@ -43,11 +44,11 @@ public class Practical3 {
     public static final String DEFAULT_SAVE_FILE = "savedData.txt";
     public static final int MAX_MILES_PER_DAY = 20;
     public static final int EARTH_RADIUS  = 3961;  //radius of the earth at 39 degrees latitude in miles - to use Kilometers: 6373
-    public static final char CITY_DELIMINATOR = ';'; // used to split data into cities
-    public static final char CITY_DATA_DELIMINATOR = ',';  // used to split city data into Name,Latitude,Longitude
-    public static final char DEGREE = '°';
-    public static final char MINUTE = '\'';
-    public static final char SECOND = '"';
+    public static final String CITY_DELIMINATOR = ";"; // used to split data into cities
+    public static final String CITY_DATA_DELIMINATOR = ",";  // used to split city data into Name,Latitude,Longitude
+    public static final String DEGREE = "°";
+    public static final String MINUTE = "\'";
+    public static final String SECOND = "\"";
     public static final String DEFAULT_STARTING_CITY = "Fort Collins,40°35'6.9288\"N,105°5'3.9084\"W";
     public static final String PREVIOUS_DELIMINATOR = ":";
 
@@ -57,11 +58,25 @@ public class Practical3 {
     String inventory = "";
     Scanner playersChoice = new Scanner(System.in);
 
-    // you will modify these two variables to keep track of data
+    // you will modify these three variables to keep track of data
     int totalDaysTraveling = 0;
     String breadcrumbs = DEFAULT_STARTING_CITY; // start at the default city
     String previousPath = "";
 
+
+    /*
+     * You will want to make ample use of the test method, as
+     * it will help you test the various methods to make sure the individual parts work
+     */
+    private void testMethod() {
+        // example
+        // double val =  convertDegreesToDecimals("40°35'6.9288\"N");
+        //  double val2 = convertDegreesToDecimals("105°5'3.9084\"W");
+        //  System.out.println(val + " should be  40.585258");
+        // System.out.println(val2 + " should be -105.084419 (check sign!)");
+
+
+    }
 
     /**
      *  The main menu calls the {@link #printMainMenuOptions()} method to first print out the menu. It then
@@ -69,10 +84,6 @@ public class Practical3 {
      *  free form answers from the player, they can type most anything. However, if what they type meets
      *  the following conditions, you will respond accordingly.
      *  <ul>
-     *      <li>travel, goto <br>
-     *          Gives control to the travel portion of the game by calling the {@link #travelMenu()} method. They
-     *          may type either travel or goto
-     *      </li>
      *      <li>stats, print <br>
      *          Calls the pre-made {@link #printStats()} method. This will also check to see if the end
      *          condition of the game has been met. This has been pre-done, but you will want to look them over.
@@ -81,10 +92,29 @@ public class Practical3 {
      *      <li>exit, quit, bye <br>
      *          Exit the program by calling return.
      *      </li>
+     *      <li>
+     *           list, ls <br>
+     *           if the player types either list or ls, then you should list all the cities just as city names. You will do
+     *           this by calling the {@link #listCities(String)} method.
+     *      </li>
+     *      <li>
+     *            City Name <br>
+     *            the name of the city. Someone should be able to write Fort, fort collins or Fort Collins. This is true
+     *            for all multiple name cities. The simplest solution may be to just search for "fort" in fort collins case. Please
+     *            note cities should not be hard coded. Instead, you must search for the city in the String cities that will be
+     *            loaded in from a file.  If someone types in the name of the city, you will have them travel to the city calculating
+     *            the time traveled. see {@link #travel(String)}.
+     *      </li>
      *      <li>DEFAULT (anything else) <br>
-     *          You will call the {@link #printInvalidOption(String)} method passing in "Exit, Goodbye, Travel".
+     *          You will call the {@link #printInvalidOption(String)} method. It takes the player choice in as the parameter.
      *      </li>
      *  </ul>
+     *
+     * <p>Some useful String methods for this method are:</p>
+     *      <ul>
+     *          <li>toLowerCase()</li>
+     *          <li>contains</li>
+     *      </ul>
      *
      * <P>
      *  <b>Easter Eggs? </b>
@@ -103,69 +133,13 @@ public class Practical3 {
         printMainMenuOptions();
         String choice = getPlayersChoice().toLowerCase();
 
-        //todo
+       //TODO: Build your menu - you will want to use the cities variable for certain things - every possiblity above in the commnents needs to appear
+        // contains will be an extremely useful method
 
-        //endtodo
-
-        mainMenu();
+        //todo uncomment the following line once you have a way to return from this method
+        //mainMenu(); // loop the menu until return is called
     }
 
-
-    /**
-     * This menu contains the main 'action' for the game. And that action is to travel to different cities.
-     * Like a traditional MUD, there isn't actually a menu of actions to perform (like we saw in ASCII Artist).
-     * Instead, it simply asks for a destination. This doesn't mean we don't want more actions, but it means
-     * we must instead look at the clients input and figure out what action they really want to do. If they
-     * type something that isn't an option, we display a help message. String contains method will be used for most of
-     * check.
-     *
-     * The first that will happen, is that you will call the {@link #printTravelMenu()} method to print out
-     * the travel menu description. We have this as a separate menu to minimize typos, and this can also allow us
-     * to do things such as print it graphically.
-     *
-     * Here are the following actions you must support / implement - at a minimum -.
-     *
-     * <ul>
-     *  <li>
-     *      City Name <br>
-     *      the name of the city. Someone should be able to write Fort, fort collins or Fort Collins. This is true
-     *      for all multiple name cities. The simplest solution may be to just search for "fort" in fort collins case. Please
-     *      note cities should not be hard coded. Instead, you must search for the city in the String cities that will be
-     *      loaded in from a file.  If someone types in the name of the city, you will have them travel to the city calculating
-     *      the time traveled. see {@link #travel(String)}
-     * </li>
-     * <li>
-     *      exit, quit, return, cancel <br>
-     *      if the player types any of the above terms, you should return to the see {@link #mainMenu()}
-     * </li>
-     * <li>
-     *     list, ls <br>
-     *     if the player types either list or ls, then you should list all the cities just as city names. You will do
-     *     this by calling the {@link #listCities(String)} method.
-     * </li>
-     * <li>
-     *     DEFAULT case (anything else)<br>
-     *     if the player types anything else (including ?, help, wth) then you will call the {@link #printInvalidOption(String)} method
-     *     passing in the examples of "Name of city (ex: Fort Collins), list cities, quit, return"
-     * </li>
-     * </ul>
-     *
-     * <p>Some useful String methods for this method are:</p>
-     * <ul>
-     *     <li>toLowerCase()</li>
-     *     <li>contains</li>
-     * </ul>
-     *
-     */
-    public void travelMenu() {
-        //todo
-
-        //endtodo
-
-        System.out.println();
-        System.out.println();
-        travelMenu();
-    }
 
     /**
      * This method lists the cities that are in the cityList provided. The reason why we provide a city list is so
@@ -187,9 +161,14 @@ public class Practical3 {
      * @param cityList A list of cities in the standard cityList format (full city data)
      */
     public void listCities(String cityList) {
-        //todo
 
-        //endtodo
+        int comma = cityList.indexOf(CITY_DATA_DELIMINATOR);
+        int semi = cityList.indexOf(CITY_DELIMINATOR);
+
+        /*TODO: write a loop that goes through all the cities in the passed in parameter cityList
+        this may be a good case for a while loop - as as long as semi is greater or equal to 0 (not -1)
+        it should be looping. It helps to draw this method out, asyou are playing 'leap frog' */
+
     }
 
 
@@ -275,9 +254,35 @@ public class Practical3 {
      * @param destination they city they wish to travel to
      */
     public void travel(String destination) {
-       //todo
 
-        //endtodo
+        //TODO: Get the current city (getCurrentCity(), and break it up into three parts - name, lat, long
+        // substring, indexOf and last indexOf are essential to doing this right.
+
+        //TODO: call convertDegreesToDecimals for the above lat and the above long
+
+
+        //TODO: get the city info (getCityInfo) of the passed destination city
+
+        //TODO: break up the next city into the same parts - this code will be very similar to the above code
+
+
+        //TODO: call convertDegreesToDecimals for the nextLat and nextLong - store them
+
+
+        //TODO: call the haversine formula
+
+
+        // TODO: calculate days by taking the distance divided by MAX_MILES_PER_DAY  (always add 1)
+
+
+
+        //TODO: uncomment the lines below - you may need to fix variable names based on what you used
+        //totalDaysTraveling += days;  // for stats later
+        //breadcrumbs += CITY_DELIMINATOR + next; // stores current location
+
+        //printTravelRecord(currentName, nextName, days);
+
+
 
     }
 
@@ -297,7 +302,8 @@ public class Practical3 {
      */
     public String getCurrentCity() {
         // first get current city
-        String current;
+        String current = "";
+        //TODO: get the current city - by looking at breadcrumbs. lastIndexOf maybe useful here.
 
         return current;
     }
@@ -325,14 +331,17 @@ public class Practical3 {
      * @return a full city data line (EX: Fort Collins,40°35'6.9288"N,105°5'3.9084"W)
      */
     public String getCityInfo(String destination) {
-        //todo
-        return ""; // you will want to change this
+        String cityInfo = "";
+        // TODO - find the city they are looking for, and return the info block for that city
+        // the info block is the part between semicolons
+
+        return cityInfo;
     }
 
     /**
      * Convert a latitude or longitude stored in coordinate degrees, minutes, seconds, direction format to decimal (double)
      * format. For example, 40°35'6.9288"N would return 40.585258 and 105°5'3.9084"W would return -105.084419.
-     * You will note that West values and North values return negative values.
+     * You will note that West values and South values return negative values.
      *
      * <p>
      * For simple coordinate conversion you take the degree part of the value, add the minute part divided by 60
@@ -357,6 +366,11 @@ public class Practical3 {
         //todo
         double decimal = 0;
 
+        //TODO - break up a single degree into parts and perform the math to convert to decimal
+        // Double.parseDouble(..) will help here
+
+        //TODO: remember to check your sign - W and S should return negative numbers
+
         /// hint you should toss in some temp print lines to makes sure you don't have an OB1 error before continuing
 
 
@@ -370,10 +384,10 @@ public class Practical3 {
      * after the splashscreen
      */
     public void splashScreen() {
-        //TODO f
+        //TODO - change this up! leave the empty print lines at the end
         System.out.println("Welcome to the Traveling Alchemist");
-        // You should have fun here! We would love to see what you can think of doing.
         //endtodo
+        System.out.println();
         System.out.println();
     }
 
@@ -382,8 +396,7 @@ public class Practical3 {
      */
     public void exitScreen() {
         System.out.println();
-        // TODO you should have some fun here. WE would love to see what you are doing. Just leave
-        // the blank line at the tope
+        // TODO change this to somethign else!
         System.out.println("Until we meet again traveler");
     }
 
@@ -477,7 +490,7 @@ public class Practical3 {
      */
     public int rollDice(int numberOfSides) {
         int rand = (int)(Math.random()*100);
-        return (rand % numberOfSides) + 1;
+        return (rand % numberOfSides) + 1; // NOTICE the use of modulo!
     }
 
     /// the following methods all deal with printing out to the screen. It would be nice if we can put them in
@@ -491,7 +504,7 @@ public class Practical3 {
      */
     public void printMainMenuOptions() { // do not modify
         System.out.println();
-        System.out.print(">> What would you like to do today? ");
+        System.out.print(">> What would you like to do today or where do you want to go? ");
     }
 
     /**
@@ -510,24 +523,15 @@ public class Practical3 {
     }
 
 
-    /**
-     * Simple menu for the travel section of the game.
-     */
-    public void printTravelMenu() { // you do not need to modify this
-        System.out.println();
-        System.out.println("Get ready to travel!");
-        System.out.println("-------------------");
-        System.out.print(">> Destination? ");
-    }
 
     /**
      * Used to respond to invalid commands. A better implementation of this method would actually
      * take in the invalid command, so the advice can change (for example, the games used to have
      * smart remarks when you typed in colorful metaphors)
-     * @param examples
+     * @param command
      */
-    public void printInvalidOption(String examples) {   // do not modify
-        System.out.println("Traveler, I don't understand what you mean. Here are some examples:  " + examples);
+    public void printInvalidOption(String command) {   // do not modify
+        System.out.println("Traveler, I don't understand what you mean by " + command + ". Here are some examples: Stat, list/ls, Name of City to travel to, Exit, Goodbye");
     }
 
     /**
@@ -582,18 +586,12 @@ public class Practical3 {
      * @return the String value of what the player entered.
      */
     public String getPlayersChoice() {  // do not modify
-       return playersChoice.nextLine();
+        return playersChoice.nextLine();
     }
 
 
 
-    // this is a complex math formula used in GIS system data
-    // https://andrew.hedges.name/experiments/haversine/
-    //dlon = lon2 - lon1
-    //dlat = lat2 - lat1
-    //a = (sin(dlat/2))^2 + cos(lat1) * cos(lat2) * (sin(dlon/2))^2
-    //c = 2 * atan2( sqrt(a), sqrt(1-a) )
-    //d = R * c (where R is the radius of the Earth)
+
     /**
      *  This is a complex math formula used in GIS system data
      *     https://andrew.hedges.name/experiments/haversine/
@@ -612,9 +610,9 @@ public class Practical3 {
         double dlat = Math.toRadians(lat2 - lat1);
         double dlon = Math.toRadians(lon2 - lon1);
         double a = Math.pow(Math.sin(dlat/2), 2) +
-                   Math.cos(Math.toRadians(lat1)) *
-                   Math.cos(Math.toRadians(lat2)) *
-                   Math.pow(Math.sin(dlon/2), 2);
+                Math.cos(Math.toRadians(lat1)) *
+                        Math.cos(Math.toRadians(lat2)) *
+                        Math.pow(Math.sin(dlon/2), 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return EARTH_RADIUS * c;
     }
@@ -627,7 +625,7 @@ public class Practical3 {
      * @param fileName name of saved data file
      */
     public void load(String fileName) {
-       try {
+        try {
             Scanner scanner = new Scanner(new File(fileName));
 
 
@@ -639,8 +637,7 @@ public class Practical3 {
             }
 
             scanner.close();
-        }catch (IOException ex) {
-            System.out.println("Can't find save file, loading default data");
+        }catch (IOException ex) {  // default case
             cities = "Fort Collins,40°35'6.9288\"N,105°5'3.9084\"W;Denver,39°44'31.3548\"N,104°59'29.5116\"W;Boulder,40°0'53.9424\"N,105°16'13.9656\"W;Salida,38°32'4.9848\"N,105°59'56.0436\"W;Loveland,40°23'55.8852\"N,105°3'9.5148\"W;Pueblo,38°16'35.2668\"N,104°36'16.5852\"W";
             inventory = "Flashlight,1;Love Potion,9;Banana,1;Water Bottle,1;";
             breadcrumbs = "Fort Collins,40°35'6.9288\"N,105°5'3.9084\"W";
@@ -653,7 +650,7 @@ public class Practical3 {
      * @param fileName file to be saved
      */
     public void save(String fileName) {
-       // optional - and not graded. Only if you want to explore how to do this
+        // optional - and not graded. Only if you want to explore how to do this
     }
 
 
@@ -677,6 +674,8 @@ public class Practical3 {
             savedData = args[0]; // to allow us to give you different files
         }
         prac.load(savedData);
+
+        prac.testMethod();
 
         prac.splashScreen();
         prac.mainMenu();
