@@ -41,7 +41,7 @@ import java.util.Scanner;
 public class Practical3 {
 
     // do not modify these constant variables - you will see them used throughout the code
-    public static final String DEFAULT_SAVE_FILE = "savedData.txt";
+    public static final String DEFAULT_SAVE_FILE = "";
     public static final int MAX_MILES_PER_DAY = 20;
     public static final int EARTH_RADIUS  = 3961;  //radius of the earth at 39 degrees latitude in miles - to use Kilometers: 6373
     public static final String CITY_DELIMINATOR = ";"; // used to split data into cities
